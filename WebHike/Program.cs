@@ -1,0 +1,45 @@
+using Microsoft.EntityFrameworkCore;
+using WebHike.Data;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+string strConn = builder.Configuration
+    .GetConnectionString("MyWebHikeConnection") ?? "";
+
+builder.Services.AddDbContext<HikeDbContext>(opt =>
+    opt.UseNpgsql(strConn));
+
+
+builder.Services.AddControllersWithViews();
+
+var app = builder.Build();
+
+var dirName = "images";
+var dirCurrent = Directory.GetCurrentDirectory();
+var path = Path.Combine(dirCurrent, "wwwroot", dirName);
+Directory.CreateDirectory(path);
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapStaticAssets();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Main}/{action=Index}/{id?}")
+    .WithStaticAssets();
+
+
+app.Run();

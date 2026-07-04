@@ -1,0 +1,58 @@
+﻿@model List<WebHike.Data.Entities.CategoryEntity>
+
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = "Категорії";
+}
+
+<section class="hero-categories">
+    <div class="hero-content">
+        <span class="hero-badge">WebHike</span>
+        <h1 class="hero-title">Категорії для нових пригод</h1>
+        <p class="hero-text">
+            Обирай маршрут для прогулянки, відпочинку або активного вікенду. Тут зібрані різні напрямки для гарного настрою та натхнення.
+        </p>
+        <div class="hero-actions">
+            <a href="#categories" class="btn btn-light hero-btn">Дивитися категорії</a>
+            <a asp-action="Create" class="btn btn-outline-light hero-btn">Додати категорію</a>
+        </div>
+    </div>
+</section>
+
+<section id="categories" class="category-section">
+    <div class="section-heading">
+        <span>Наші напрямки</span>
+        <h2>Популярні категорії</h2>
+        <p>Фото автоматично підлаштовуються під картку, а сітка красиво змінюється на різних екранах.</p>
+    </div>
+
+    <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-xl-3">
+        @foreach (var cat in Model)
+        {
+            <div class="col">
+                <article class="category-card h-100">
+                    <div class="category-image-box">
+                        <img src="@cat.Image" class="category-img" alt="@cat.Name" loading="lazy">
+                        <div class="category-number">#@(cat.Id.ToString("00"))</div>
+                    </div>
+
+                    <div class="category-content">
+                        <div>
+                            <span class="category-label">Категорія</span>
+                            <h3>@cat.Name</h3>
+                        </div>
+
+                        <p>
+                            Легка добірка для приємної прогулянки, гарних фото та позитивного настрою.
+                        </p>
+
+                        <a href="#" class="category-link">
+                            Переглянути
+                            <span>→</span>
+                        </a>
+                    </div>
+                </article>
+            </div>
+        }
+    </div>
+</section>
