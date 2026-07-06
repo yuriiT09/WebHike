@@ -27,13 +27,21 @@
     </div>
 
     <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-xl-3">
-        @foreach (var cat in Model)
+        @for (int i = 0; i < Model.Count; i++)
         {
+            var cat = Model[i];
+
+            var imageSrc = string.IsNullOrWhiteSpace(cat.Image)
+            ? "/images/default.jpg"
+            : cat.Image.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+            ? cat.Image
+            : "/images/" + cat.Image;
+
             <div class="col">
                 <article class="category-card h-100">
                     <div class="category-image-box">
-                        <img src="@cat.Image" class="category-img" alt="@cat.Name" loading="lazy">
-                        <div class="category-number">#@(cat.Id.ToString("00"))</div>
+                        <img src="@imageSrc" class="category-img" alt="@cat.Name" loading="lazy">
+                        <div class="category-number">#@((i + 1).ToString("00"))</div>
                     </div>
 
                     <div class="category-content">
