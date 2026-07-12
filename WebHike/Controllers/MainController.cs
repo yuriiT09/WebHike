@@ -11,25 +11,12 @@ public class MainController(HikeDbContext hikeDbContext, ImageService imageServi
 {
     public IActionResult Index()
     {
-        var list = new List<CategoryEntity>();
+        EnsureCategories();
 
-        try
-        {
-            list = hikeDbContext.Categories
-                .Where(x => !x.IsDeleted)
-                .OrderByDescending(x => x.Id)
-                .ToList();
-        }
-        catch
-        {
-            list = new List<CategoryEntity>();
-        }
-
-        if (list.Count < 8)
-        {
-            var fakeCategories = GetFakeCategories();
-            list.AddRange(fakeCategories.Take(8 - list.Count));
-        }
+        var list = hikeDbContext.Categories
+            .Where(x => !x.IsDeleted)
+            .OrderByDescending(x => x.Id)
+            .ToList();
 
         return View(list);
     }
@@ -78,66 +65,123 @@ public class MainController(HikeDbContext hikeDbContext, ImageService imageServi
         return View(model);
     }
 
-    private List<CategoryEntity> GetFakeCategories()
+    [HttpGet]
+    public IActionResult Edit(int id)
     {
-        return new List<CategoryEntity>
+        var category = hikeDbContext.Categories.FirstOrDefault(x => x.Id == id && !x.IsDeleted);
+
+        if (category == null)
+            return RedirectToAction(nameof(Index));
+
+        var model = new CategoryEditViewModel
+        {
+            Id = category.Id,
+            Name = category.Name,
+            Slug = category.Slug,
+            CurrentImage = category.Image
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(CategoryEditViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var category = hikeDbContext.Categories.FirstOrDefault(x => x.Id == model.Id && !x.IsDeleted);
+
+        if (category == null)
+            return RedirectToAction(nameof(Index));
+
+        category.Name = model.Name;
+        category.Slug = model.Slug;
+
+        if (model.Image != null && model.Image.Length > 0)
+        {
+            if (!imageService.IsCorrectImage(model.Image))
+            {
+                ModelState.AddModelError(nameof(model.Image), "Оберіть правильне зображення");
+                return View(model);
+            }
+
+            try
+            {
+                var oldImage = category.Image;
+                category.Image = await imageService.SaveCategoryImageAsync(model.Image);
+                imageService.DeleteImage(oldImage);
+            }
+            catch
+            {
+                ModelState.AddModelError(nameof(model.Image), "Не вдалося обробити фото");
+                return View(model);
+            }
+        }
+
+        hikeDbContext.SaveChanges();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    private void EnsureCategories()
+    {
+        if (hikeDbContext.Categories.Any())
+            return;
+
+        var categories = new List<CategoryEntity>
         {
             new CategoryEntity
             {
-                Id = 1,
                 Name = "Гірські походи",
                 Slug = "mountain-hikes",
                 Image = "https://picsum.photos/seed/mountain-hikes/1000/700"
             },
             new CategoryEntity
             {
-                Id = 2,
                 Name = "Лісові стежки",
                 Slug = "forest-trails",
                 Image = "https://picsum.photos/seed/forest-trails/1000/700"
             },
             new CategoryEntity
             {
-                Id = 3,
                 Name = "Озера та річки",
                 Slug = "lake-routes",
                 Image = "https://picsum.photos/seed/lake-routes/1000/700"
             },
             new CategoryEntity
             {
-                Id = 4,
                 Name = "Сімейні маршрути",
                 Slug = "family-routes",
                 Image = "https://picsum.photos/seed/family-routes/1000/700"
             },
             new CategoryEntity
             {
-                Id = 5,
                 Name = "Кемпінг",
                 Slug = "camping",
                 Image = "https://picsum.photos/seed/camping-trip/1000/700"
             },
             new CategoryEntity
             {
-                Id = 6,
                 Name = "Зимові пригоди",
                 Slug = "winter-adventures",
                 Image = "https://picsum.photos/seed/winter-adventures/1000/700"
             },
             new CategoryEntity
             {
-                Id = 7,
                 Name = "Сонячні прогулянки",
                 Slug = "sunny-walks",
                 Image = "https://picsum.photos/seed/sunny-walks/1000/700"
             },
             new CategoryEntity
             {
-                Id = 8,
                 Name = "Туристичне спорядження",
                 Slug = "hiking-gear",
                 Image = "https://picsum.photos/seed/hiking-gear/1000/700"
             }
         };
+
+        hikeDbContext.Categories.AddRange(categories);
+        hikeDbContext.SaveChanges();
     }
 }

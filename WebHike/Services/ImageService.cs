@@ -55,4 +55,21 @@ public class ImageService
 
         return fileName;
     }
+
+    public void DeleteImage(string? imageName)
+    {
+        if (string.IsNullOrWhiteSpace(imageName))
+            return;
+
+        if (imageName.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            return;
+
+        if (imageName == "default.jpg")
+            return;
+
+        var filePath = Path.Combine(_environment.WebRootPath, "images", imageName);
+
+        if (File.Exists(filePath))
+            File.Delete(filePath);
+    }
 }

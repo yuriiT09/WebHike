@@ -1,0 +1,63 @@
+﻿@model WebHike.Models.Category.CategoryEditViewModel
+
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = "Редагувати категорію";
+
+    var imageSrc = string.IsNullOrWhiteSpace(Model.CurrentImage)
+        ? "/images/default.jpg"
+        : Model.CurrentImage.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+            ? Model.CurrentImage
+            : "/images/" + Model.CurrentImage;
+}
+
+<section class="category-section">
+    <div class="section-heading">
+        <span>Редагування</span>
+        <h2>Змінити категорію</h2>
+        <p>Оновіть назву, slug або фото категорії. Якщо нове фото не вибрати, залишиться поточне.</p>
+    </div>
+
+    <div class="edit-page-card">
+        <div class="edit-preview">
+            <img src="@imageSrc" alt="@Model.Name">
+            <div>
+                <span>Поточна категорія</span>
+                <h3>@Model.Name</h3>
+            </div>
+        </div>
+
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" class="edit-form">
+            <input asp-for="Id" type="hidden">
+            <input asp-for="CurrentImage" type="hidden">
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control">
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Slug" class="form-label"></label>
+                <input asp-for="Slug" class="form-control">
+                <span asp-validation-for="Slug" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Image" class="form-label"></label>
+                <input asp-for="Image" class="form-control" accept="image/*">
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+
+            <div class="edit-actions">
+                <button type="submit" class="btn btn-success">
+                    Зберегти зміни
+                </button>
+
+                <a asp-action="Index" class="btn btn-outline-dark">
+                    Назад
+                </a>
+            </div>
+        </form>
+    </div>
+</section>

@@ -5,20 +5,6 @@
     ViewData["Title"] = "Категорії";
 }
 
-<section class="hero-categories">
-    <div class="hero-content">
-        <span class="hero-badge">WebHike</span>
-        <h1 class="hero-title">Категорії для нових пригод</h1>
-        <p class="hero-text">
-            Обирай маршрут для прогулянки, відпочинку або активного вікенду. Тут зібрані різні напрямки для гарного настрою та натхнення.
-        </p>
-        <div class="hero-actions">
-            <a href="#categories" class="btn btn-light hero-btn">Дивитися категорії</a>
-            <a asp-action="Create" class="btn btn-outline-light hero-btn">Додати категорію</a>
-        </div>
-    </div>
-</section>
-
 <section id="categories" class="category-section">
     <div class="section-heading">
         <span>Наші напрямки</span>
@@ -54,10 +40,16 @@
                             Легка добірка для приємної прогулянки, гарних фото та позитивного настрою.
                         </p>
 
-                        <a href="#" class="category-link">
-                            Переглянути
-                            <span>→</span>
-                        </a>
+                        <div class="category-buttons">
+                            <a href="#" class="category-link">
+                                Переглянути
+                                <span>→</span>
+                            </a>
+
+                            <a asp-action="Edit" asp-route-id="@cat.Id" class="category-edit-link">
+                                Редагувати
+                            </a>
+                        </div>
                     </div>
                 </article>
             </div>
