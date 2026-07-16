@@ -7,7 +7,12 @@ public class HikeDbContext : DbContext
 {
     public HikeDbContext(DbContextOptions<HikeDbContext> options)
         : base(options)
-    {}
+    {
+    }
 
     public DbSet<CategoryEntity> Categories { get; set; }
+
+    public DbSet<ItemEntity> Items { get; set; }
+
+    public DbSet<ItemImageEntity> ItemImages { get; set; }
 }

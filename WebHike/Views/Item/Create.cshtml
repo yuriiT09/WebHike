@@ -1,0 +1,191 @@
+﻿@model WebHike.Models.Item.ItemCreateViewModel
+
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = "Додати товар";
+}
+
+<section class="add-item-page">
+    <form asp-action="Create" asp-controller="Item" method="post" enctype="multipart/form-data" class="add-item-form">
+        <div class="item-top-grid">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control item-input">
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CategoryId" class="form-label"></label>
+                <select asp-for="CategoryId" asp-items="Model.Categories" class="form-select item-input">
+                    <option value="">Оберіть категорію</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="editor-card">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" id="Description" class="form-control editor-area"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+
+            <div class="photo-upload-box" id="photoUploadBox">
+                <input asp-for="Images" type="file" id="Images" class="d-none" accept="image/*" multiple>
+                <span>Drag or select photos</span>
+            </div>
+
+            <div class="photo-list" id="photoList"></div>
+        </div>
+
+        <div class="item-form-actions">
+            <button type="submit" class="btn btn-success">
+                Зберегти
+            </button>
+
+            <a asp-controller="Main" asp-action="Index" class="btn btn-outline-dark">
+                Назад
+            </a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
+
+    <script>
+        tinymce.init({
+            selector: '#Description',
+            height: 390,
+            menubar: 'file edit view insert format tools table help',
+            plugins: 'lists link image table preview fullscreen code',
+            toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | preview fullscreen',
+            branding: true,
+            promotion: false
+        });
+
+        const photoInput = document.getElementById('Images');
+        const photoBox = document.getElementById('photoUploadBox');
+        const photoList = document.getElementById('photoList');
+        const form = document.querySelector('.add-item-form');
+
+        let selectedFiles = [];
+        let draggedIndex = null;
+
+        photoBox.addEventListener('click', function () {
+            photoInput.click();
+        });
+
+        photoInput.addEventListener('change', function () {
+            addPhotos(Array.from(photoInput.files));
+        });
+
+        photoBox.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            photoBox.classList.add('photo-upload-box-active');
+        });
+
+        photoBox.addEventListener('dragleave', function () {
+            photoBox.classList.remove('photo-upload-box-active');
+        });
+
+        photoBox.addEventListener('drop', function (e) {
+            e.preventDefault();
+            photoBox.classList.remove('photo-upload-box-active');
+            addPhotos(Array.from(e.dataTransfer.files));
+        });
+
+        form.addEventListener('submit', function () {
+            tinymce.triggerSave();
+            updatePhotoInput();
+        });
+
+        function addPhotos(files) {
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].type.startsWith('image/')) {
+                    selectedFiles.push(files[i]);
+                }
+            }
+
+            updatePhotoInput();
+            renderPhotos();
+        }
+
+        function removePhoto(index) {
+            selectedFiles.splice(index, 1);
+            updatePhotoInput();
+            renderPhotos();
+        }
+
+        function changePhotoPosition(from, to) {
+            if (from === null || from === to) {
+                return;
+            }
+
+            const file = selectedFiles[from];
+            selectedFiles.splice(from, 1);
+            selectedFiles.splice(to, 0, file);
+
+            updatePhotoInput();
+            renderPhotos();
+        }
+
+        function updatePhotoInput() {
+            const dataTransfer = new DataTransfer();
+
+            for (let i = 0; i < selectedFiles.length; i++) {
+                dataTransfer.items.add(selectedFiles[i]);
+            }
+
+            photoInput.files = dataTransfer.files;
+        }
+
+        function renderPhotos() {
+            photoList.innerHTML = '';
+
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const photo = document.createElement('div');
+                photo.className = 'photo-card';
+                photo.draggable = true;
+
+                const image = document.createElement('img');
+                image.src = URL.createObjectURL(selectedFiles[i]);
+
+                const number = document.createElement('span');
+                number.className = 'photo-number';
+                number.innerText = i + 1;
+
+                const remove = document.createElement('button');
+                remove.type = 'button';
+                remove.className = 'photo-delete';
+                remove.innerText = '×';
+
+                remove.addEventListener('click', function () {
+                    removePhoto(i);
+                });
+
+                photo.addEventListener('dragstart', function () {
+                    draggedIndex = i;
+                    photo.classList.add('photo-dragging');
+                });
+
+                photo.addEventListener('dragend', function () {
+                    draggedIndex = null;
+                    photo.classList.remove('photo-dragging');
+                });
+
+                photo.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                });
+
+                photo.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    changePhotoPosition(draggedIndex, i);
+                });
+
+                photo.appendChild(image);
+                photo.appendChild(number);
+                photo.appendChild(remove);
+                photoList.appendChild(photo);
+            }
+        }
+    </script>
+}

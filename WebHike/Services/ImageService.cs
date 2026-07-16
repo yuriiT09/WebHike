@@ -28,7 +28,17 @@ public class ImageService
 
     public async Task<string> SaveCategoryImageAsync(IFormFile file)
     {
-        var dirPath = Path.Combine(_environment.WebRootPath, "images");
+        return await SaveImageAsync(file, "images");
+    }
+
+    public async Task<string> SaveItemImageAsync(IFormFile file)
+    {
+        return await SaveImageAsync(file, Path.Combine("images", "items"));
+    }
+
+    private async Task<string> SaveImageAsync(IFormFile file, string folder)
+    {
+        var dirPath = Path.Combine(_environment.WebRootPath, folder);
         Directory.CreateDirectory(dirPath);
 
         var fileName = Guid.NewGuid().ToString() + ".jpg";
@@ -67,9 +77,13 @@ public class ImageService
         if (imageName == "default.jpg")
             return;
 
-        var filePath = Path.Combine(_environment.WebRootPath, "images", imageName);
+        var categoryPath = Path.Combine(_environment.WebRootPath, "images", imageName);
+        var itemPath = Path.Combine(_environment.WebRootPath, "images", "items", imageName);
 
-        if (File.Exists(filePath))
-            File.Delete(filePath);
+        if (File.Exists(categoryPath))
+            File.Delete(categoryPath);
+
+        if (File.Exists(itemPath))
+            File.Delete(itemPath);
     }
 }
