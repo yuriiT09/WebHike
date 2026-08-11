@@ -25,7 +25,24 @@
 
         <div class="editor-card">
             <label asp-for="Description" class="form-label"></label>
-            <textarea asp-for="Description" id="Description" class="form-control editor-area"></textarea>
+            <input asp-for="Description" type="hidden" id="Description">
+
+            <div class="text-editor">
+                <div class="text-editor-menu">
+                    <button type="button" onclick="formatText('bold')">B</button>
+                    <button type="button" onclick="formatText('italic')">I</button>
+                    <button type="button" onclick="formatText('justifyLeft')">Left</button>
+                    <button type="button" onclick="formatText('justifyCenter')">Center</button>
+                    <button type="button" onclick="formatText('justifyRight')">Right</button>
+                    <button type="button" onclick="formatText('insertUnorderedList')">List</button>
+                    <button type="button" onclick="formatText('insertOrderedList')">1. List</button>
+                </div>
+
+                <div id="descriptionEditor" class="text-editor-body" contenteditable="true">
+                    @Html.Raw(Model.Description)
+                </div>
+            </div>
+
             <span asp-validation-for="Description" class="text-danger"></span>
 
             <div class="photo-upload-box" id="photoUploadBox">
@@ -49,26 +66,31 @@
 </section>
 
 @section Scripts {
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
-
     <script>
-        tinymce.init({
-            selector: '#Description',
-            height: 390,
-            menubar: 'file edit view insert format tools table help',
-            plugins: 'lists link image table preview fullscreen code',
-            toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | preview fullscreen',
-            branding: true,
-            promotion: false
-        });
+        const form = document.querySelector('.add-item-form');
+        const descriptionInput = document.getElementById('Description');
+        const descriptionEditor = document.getElementById('descriptionEditor');
 
         const photoInput = document.getElementById('Images');
         const photoBox = document.getElementById('photoUploadBox');
         const photoList = document.getElementById('photoList');
-        const form = document.querySelector('.add-item-form');
 
         let selectedFiles = [];
         let draggedIndex = null;
+
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            descriptionEditor.focus();
+            saveDescription();
+        }
+
+        function saveDescription() {
+            descriptionInput.value = descriptionEditor.innerHTML;
+        }
+
+        descriptionEditor.addEventListener('input', saveDescription);
+        descriptionEditor.addEventListener('keyup', saveDescription);
+        descriptionEditor.addEventListener('mouseup', saveDescription);
 
         photoBox.addEventListener('click', function () {
             photoInput.click();
@@ -94,7 +116,7 @@
         });
 
         form.addEventListener('submit', function () {
-            tinymce.triggerSave();
+            saveDescription();
             updatePhotoInput();
         });
 
@@ -187,5 +209,7 @@
                 photoList.appendChild(photo);
             }
         }
+
+        saveDescription();
     </script>
 }

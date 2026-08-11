@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using WebHike.Data;
 using WebHike.Data.Entities;
 using WebHike.Models.Item;
@@ -10,6 +11,18 @@ namespace WebHike.Controllers;
 public class ItemController(HikeDbContext hikeDbContext, ImageService imageService)
     : Controller
 {
+    public IActionResult Index()
+    {
+        var items = hikeDbContext.Items
+            .Include(x => x.Category)
+            .Include(x => x.Images.OrderBy(y => y.Priority))
+            .Where(x => !x.IsDeleted)
+            .OrderByDescending(x => x.Id)
+            .ToList();
+
+        return View(items);
+    }
+
     [HttpGet]
     public IActionResult Create()
     {
@@ -69,7 +82,7 @@ public class ItemController(HikeDbContext hikeDbContext, ImageService imageServi
             hikeDbContext.SaveChanges();
         }
 
-        return RedirectToAction("Index", "Main");
+        return RedirectToAction(nameof(Index));
     }
 
     private List<SelectListItem> GetCategories()

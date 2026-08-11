@@ -1,0 +1,75 @@
+﻿@model List<WebHike.Data.Entities.ItemEntity>
+
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = "Товари";
+}
+
+<section class="items-page">
+    <div class="items-head">
+        <div>
+            <span>Каталог</span>
+            <h1>Список товарів</h1>
+            <p>Тут відображаються всі додані товари з категорією, описом та головним фото.</p>
+        </div>
+
+        <a asp-controller="Item" asp-action="Create" class="btn btn-success items-add-btn">
+            Додати товар
+        </a>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="items-empty">
+            <h2>Товарів поки немає</h2>
+            <p>Додайте перший товар, щоб він зʼявився у списку.</p>
+            <a asp-controller="Item" asp-action="Create" class="btn btn-dark">
+                Додати товар
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-xl-3">
+            @foreach (var item in Model)
+            {
+                var mainImage = item.Images
+                .OrderBy(x => x.Priority)
+                .FirstOrDefault();
+
+                var imageSrc = mainImage == null
+                ? "/images/default.jpg"
+                : "/images/items/" + mainImage.Image;
+
+                <div class="col">
+                    <article class="item-card">
+                        <div class="item-image-wrap">
+                            <img src="@imageSrc" alt="@item.Name" class="item-card-image">
+                            <div class="item-photo-count">
+                                @item.Images.Count фото
+                            </div>
+                        </div>
+
+                        <div class="item-card-body">
+                            <div>
+                                <span class="item-category-name">@item.Category.Name</span>
+                                <h2>@item.Name</h2>
+                            </div>
+
+                            <div class="item-short-description">
+                                @Html.Raw(item.Description)
+                            </div>
+
+                            <div class="item-card-footer">
+                                <span>@item.DateCreated.ToString("dd.MM.yyyy")</span>
+                                <a href="#" class="item-more-link">
+                                    Детальніше
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    }
+</section>
