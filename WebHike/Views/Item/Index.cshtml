@@ -62,8 +62,8 @@
 
                             <div class="item-card-footer">
                                 <span>@item.DateCreated.ToString("dd.MM.yyyy")</span>
-                                <a href="#" class="item-more-link">
-                                    Детальніше
+                                <a asp-controller="Item" asp-action="Details" asp-route-id="@item.Id" class="item-more-link">
+                                    Переглянути
                                 </a>
                             </div>
                         </div>

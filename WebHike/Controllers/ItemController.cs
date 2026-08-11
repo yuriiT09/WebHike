@@ -23,6 +23,19 @@ public class ItemController(HikeDbContext hikeDbContext, ImageService imageServi
         return View(items);
     }
 
+    public IActionResult Details(int id)
+    {
+        var item = hikeDbContext.Items
+            .Include(x => x.Category)
+            .Include(x => x.Images.OrderBy(y => y.Priority))
+            .FirstOrDefault(x => x.Id == id && !x.IsDeleted);
+
+        if (item == null)
+            return RedirectToAction(nameof(Index));
+
+        return View(item);
+    }
+
     [HttpGet]
     public IActionResult Create()
     {
@@ -81,6 +94,28 @@ public class ItemController(HikeDbContext hikeDbContext, ImageService imageServi
 
             hikeDbContext.SaveChanges();
         }
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public IActionResult Delete(int id)
+    {
+        var item = hikeDbContext.Items
+            .Include(x => x.Images)
+            .FirstOrDefault(x => x.Id == id);
+
+        if (item == null)
+            return RedirectToAction(nameof(Index));
+
+        foreach (var image in item.Images)
+        {
+            imageService.DeleteImage(image.Image);
+        }
+
+        hikeDbContext.ItemImages.RemoveRange(item.Images);
+        hikeDbContext.Items.Remove(item);
+        hikeDbContext.SaveChanges();
 
         return RedirectToAction(nameof(Index));
     }

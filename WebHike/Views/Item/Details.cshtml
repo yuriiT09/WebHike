@@ -1,0 +1,80 @@
+﻿@model WebHike.Data.Entities.ItemEntity
+
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = Model.Name;
+
+    var orderedImages = Model.Images
+        .OrderBy(x => x.Priority)
+        .ToList();
+
+    var mainImage = orderedImages.FirstOrDefault();
+
+    var mainImageSrc = mainImage == null
+        ? "/images/default.jpg"
+        : "/images/items/" + mainImage.Image;
+}
+
+<section class="product-view-page">
+    <div class="product-view-top">
+        <a asp-controller="Item" asp-action="Index" class="product-back-link">
+            ← До товарів
+        </a>
+
+        <form asp-controller="Item" asp-action="Delete" asp-route-id="@Model.Id" method="post">
+            <button type="submit" class="product-delete-btn" onclick="return confirm('Видалити товар?')">
+                Видалити
+            </button>
+        </form>
+    </div>
+
+    <div class="product-view-card">
+        <div class="product-main-photo-box">
+            <img src="@mainImageSrc" alt="@Model.Name" id="mainProductImage">
+        </div>
+
+        <div class="product-view-info">
+            <span>@Model.Category.Name</span>
+            <h1>@Model.Name</h1>
+
+            <div class="product-view-date">
+                Додано: @Model.DateCreated.ToString("dd.MM.yyyy")
+            </div>
+
+            <div class="product-view-description">
+                @Html.Raw(Model.Description)
+            </div>
+        </div>
+    </div>
+
+    @if (orderedImages.Count > 0)
+    {
+        <div class="product-gallery-section">
+            <div class="product-gallery-title">
+                <span>Фото товару</span>
+                <h2>Галерея</h2>
+            </div>
+
+            <div class="product-gallery">
+                @for (int i = 0; i < orderedImages.Count; i++)
+                {
+                    var image = orderedImages[i];
+                    var imageSrc = "/images/items/" + image.Image;
+
+                    <button type="button" class="product-gallery-item" onclick="changeMainPhoto('@imageSrc')">
+                        <img src="@imageSrc" alt="@Model.Name">
+                        <span>@(i + 1)</span>
+                    </button>
+                }
+            </div>
+        </div>
+    }
+</section>
+
+@section Scripts {
+    <script>
+        function changeMainPhoto(src) {
+            document.getElementById('mainProductImage').src = src;
+        }
+    </script>
+}
