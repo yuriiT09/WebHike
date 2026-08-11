@@ -1,0 +1,54 @@
+﻿@model WebHike.Models.Account.LoginViewModel
+
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = "Вхід";
+}
+
+<section class="auth-page">
+    <div class="auth-card">
+        <div class="auth-info auth-login-bg">
+            <span>WebHike</span>
+            <h1>Раді бачити знову</h1>
+            <p>Увійдіть у свій акаунт, щоб продовжити роботу з товарами та категоріями.</p>
+        </div>
+
+        <div class="auth-form-box">
+            <div class="auth-heading">
+                <span>Вхід</span>
+                <h2>Увійти</h2>
+                <p>Введіть email та пароль</p>
+            </div>
+
+            @if (TempData["AccountMessage"] != null)
+            {
+                <div class="auth-message">
+                    @TempData["AccountMessage"]
+                </div>
+            }
+
+            <form asp-action="Login" method="post" class="auth-form">
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control auth-input">
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-control auth-input">
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-success auth-btn">
+                    Увійти
+                </button>
+
+                <div class="auth-bottom-link">
+                    Немає акаунта?
+                    <a asp-controller="Account" asp-action="Register">Зареєструватися</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
