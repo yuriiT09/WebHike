@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] - Admin WebHike</title>
+    <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/site.css" rel="stylesheet">
+</head>
+<body class="admin-body">
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="admin-logo">
+                WebHike Admin
+            </a>
+
+            <nav class="admin-menu">
+                <a asp-area="Admin" asp-controller="Categories" asp-action="Index">Категорії</a>
+                <a asp-area="" asp-controller="Item" asp-action="Index">Товари</a>
+                <a asp-area="" asp-controller="Main" asp-action="Index">На сайт</a>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
