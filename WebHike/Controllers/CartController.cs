@@ -16,8 +16,9 @@ public class CartController(HikeDbContext hikeDbContext) : Controller
         List<int> ids = cart.Keys.ToList();
 
         var items = hikeDbContext.Items
-            .Include(x => x.Images.OrderBy(y => y.Priority))
-            .Where(x => ids.Contains(x.Id))
+            .Include(x => x.Category)
+            .Include(x => x.Images)
+            .Where(x => ids.Contains(x.Id) && !x.IsDeleted)
             .ToList();
 
         var model = items.Select(x =>
@@ -31,6 +32,7 @@ public class CartController(HikeDbContext hikeDbContext) : Controller
             {
                 ItemId = x.Id,
                 Name = x.Name,
+                CategoryName = x.Category.Name,
                 Image = image,
                 Quantity = cart[x.Id]
             };
@@ -60,7 +62,20 @@ public class CartController(HikeDbContext hikeDbContext) : Controller
     }
 
     [HttpPost]
-    public IActionResult Remove(int id)
+    public IActionResult Plus(int id)
+    {
+        Dictionary<int, int> cart = GetCart();
+
+        if (cart.ContainsKey(id))
+            cart[id]++;
+
+        SaveCart(cart);
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public IActionResult Minus(int id)
     {
         Dictionary<int, int> cart = GetCart();
 

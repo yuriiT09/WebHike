@@ -6,6 +6,8 @@ public class CartItemViewModel
 
     public string Name { get; set; } = null!;
 
+    public string CategoryName { get; set; } = null!;
+
     public string Image { get; set; } = null!;
 
     public int Quantity { get; set; }
