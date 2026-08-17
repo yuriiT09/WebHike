@@ -1,0 +1,77 @@
+﻿@model List<WebHike.Models.Cart.CartItemViewModel>
+
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = "Кошик";
+}
+
+<section class="cart-page">
+    <div class="cart-head">
+        <div>
+            <span>Кошик</span>
+            <h1>Кошик товарів</h1>
+            <p>Тут відображаються товари, які користувач додав у кошик.</p>
+        </div>
+
+        <a asp-controller="Item" asp-action="Index" class="btn btn-success cart-back-btn">
+            До товарів
+        </a>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="cart-empty">
+            <h2>Кошик порожній</h2>
+            <p>Перейдіть до списку товарів і додайте перший товар.</p>
+            <a asp-controller="Item" asp-action="Index" class="btn btn-dark">
+                Переглянути товари
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-list">
+            @foreach (var item in Model)
+            {
+                string imageSrc = item.Image == "default.jpg"
+                ? "/images/default.jpg"
+                : "/images/items/" + item.Image;
+
+                <article class="cart-item">
+                    <div class="cart-item-image">
+                        <img src="@imageSrc" alt="@item.Name">
+                    </div>
+
+                    <div class="cart-item-info">
+                        <h2>@item.Name</h2>
+                        <p>Кількість: @item.Quantity</p>
+
+                        <div class="cart-actions">
+                            <form asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ItemId" method="post">
+                                <button type="submit">−</button>
+                            </form>
+
+                            <span>@item.Quantity</span>
+
+                            <form asp-controller="Cart" asp-action="Add" asp-route-id="@item.ItemId" method="post">
+                                <button type="submit">+</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="cart-item-delete">
+                        <form asp-controller="Cart" asp-action="Delete" asp-route-id="@item.ItemId" method="post">
+                            <button type="submit">Видалити</button>
+                        </form>
+                    </div>
+                </article>
+            }
+        </div>
+
+        <form asp-controller="Cart" asp-action="Clear" method="post" class="cart-clear-form">
+            <button type="submit" class="btn btn-outline-danger">
+                Очистити кошик
+            </button>
+        </form>
+    }
+</section>

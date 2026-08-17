@@ -61,10 +61,15 @@
                             </div>
 
                             <div class="item-card-footer">
-                                <span>@item.DateCreated.ToString("dd.MM.yyyy")</span>
                                 <a asp-controller="Item" asp-action="Details" asp-route-id="@item.Id" class="item-more-link">
                                     Переглянути
                                 </a>
+
+                                <form asp-controller="Cart" asp-action="Add" asp-route-id="@item.Id" method="post">
+                                    <button type="submit" class="item-cart-btn">
+                                        В кошик
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </article>

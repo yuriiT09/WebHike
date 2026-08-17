@@ -12,14 +12,27 @@ builder.Services.AddDbContext<HikeDbContext>(opt =>
 
 builder.Services.AddScoped<ImageService>();
 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-var dirName = "images";
-var dirCurrent = Directory.GetCurrentDirectory();
-var path = Path.Combine(dirCurrent, "wwwroot", dirName);
-Directory.CreateDirectory(path);
+string imagesPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+Directory.CreateDirectory(imagesPath);
+
+string userImagesPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "users");
+Directory.CreateDirectory(userImagesPath);
+
+string itemImagesPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "items");
+Directory.CreateDirectory(itemImagesPath);
 
 if (!app.Environment.IsDevelopment())
 {
@@ -28,18 +41,13 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
-
-app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Main}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Main}/{action=Index}/{id?}");
 
 app.Run();

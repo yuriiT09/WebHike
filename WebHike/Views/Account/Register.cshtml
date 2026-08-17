@@ -17,10 +17,12 @@
             <div class="auth-heading">
                 <span>Реєстрація</span>
                 <h2>Новий акаунт</h2>
-                <p>Поля мають валідацію, тому форма перевіряє введені дані.</p>
+                <p>Поля мають валідацію, а користувач зберігається у базу даних.</p>
             </div>
 
             <form asp-action="Register" method="post" enctype="multipart/form-data" class="auth-form">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label asp-for="FirstName" class="form-label"></label>

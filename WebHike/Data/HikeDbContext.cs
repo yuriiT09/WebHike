@@ -15,4 +15,6 @@ public class HikeDbContext : DbContext
     public DbSet<ItemEntity> Items { get; set; }
 
     public DbSet<ItemImageEntity> ItemImages { get; set; }
+
+    public DbSet<UserEntity> Users { get; set; }
 }

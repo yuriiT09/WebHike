@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace WebHike.Models.Account;
 
@@ -32,6 +33,5 @@ public class RegisterViewModel
     public string PasswordConfirm { get; set; } = null!;
 
     [Display(Name = "Photo")]
-    [DataType(DataType.Upload)]
     public IFormFile? Image { get; set; }
 }

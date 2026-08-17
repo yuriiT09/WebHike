@@ -1,4 +1,25 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@using WebHike.Data
+@inject HikeDbContext HikeDbContext
+
+@{
+    int? userId = Context.Session.GetInt32("UserId");
+
+    var currentUser = userId == null
+        ? null
+        : HikeDbContext.Users.FirstOrDefault(x => x.Id == userId.Value);
+
+    string userImage = "";
+
+    if (currentUser != null)
+    {
+        userImage = currentUser.Image == "default.jpg"
+            ? "/images/default.jpg"
+            : "/images/users/" + currentUser.Image;
+    }
+}
+
+<!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="utf-8">
@@ -29,17 +50,40 @@
                             <a class="nav-link" asp-controller="Item" asp-action="Index">Товари</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" asp-controller="Cart" asp-action="Index">Кошик</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" asp-controller="Main" asp-action="Create">Додати категорію</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Item" asp-action="Create">Додати товар</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Login">Вхід</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-register-link" asp-controller="Account" asp-action="Register">Реєстрація</a>
-                        </li>
+
+                        @if (currentUser == null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">Вхід</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-register-link" asp-controller="Account" asp-action="Register">Реєстрація</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <div class="user-menu-link">
+                                    <img src="@userImage" alt="@currentUser.FirstName">
+                                    <span>@currentUser.LastName @currentUser.FirstName</span>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    <button type="submit" class="logout-menu-btn">
+                                        Вийти
+                                    </button>
+                                </form>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
