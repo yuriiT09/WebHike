@@ -10,11 +10,11 @@
         <div>
             <span>Каталог</span>
             <h1>Список товарів</h1>
-            <p>Тут відображаються всі додані товари з категорією, описом та головним фото.</p>
+            <p>Користувач може переглядати товари, відкривати деталі та додавати товар у кошик.</p>
         </div>
 
-        <a asp-controller="Item" asp-action="Create" class="btn btn-success items-add-btn">
-            Додати товар
+        <a asp-controller="Cart" asp-action="Index" class="btn btn-success items-add-btn">
+            Кошик
         </a>
     </div>
 
@@ -22,9 +22,9 @@
     {
         <div class="items-empty">
             <h2>Товарів поки немає</h2>
-            <p>Додайте перший товар, щоб він зʼявився у списку.</p>
-            <a asp-controller="Item" asp-action="Create" class="btn btn-dark">
-                Додати товар
+            <p>Товари додаються через адмін панель.</p>
+            <a asp-area="Admin" asp-controller="Items" asp-action="Create" class="btn btn-dark">
+                Додати товар в адмінці
             </a>
         </div>
     }

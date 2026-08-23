@@ -1,0 +1,51 @@
+﻿@model AdminItemCreateVM
+
+@{
+    ViewData["Title"] = "Додати товар";
+}
+
+<div class="admin-page-head">
+    <div>
+        <span>Товари</span>
+        <h1>Додати товар</h1>
+        <p>Створення товарів виконується тільки в адмін панелі.</p>
+    </div>
+
+    <a asp-area="Admin" asp-controller="Items" asp-action="Index" class="btn btn-outline-dark admin-add-btn">
+        Назад
+    </a>
+</div>
+
+<div class="admin-form-card">
+    <form asp-area="Admin" asp-controller="Items" asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control admin-input">
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="CategoryId" class="form-label"></label>
+            <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select admin-input">
+                <option value="">Оберіть категорію</option>
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control admin-input admin-textarea"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Images" class="form-label"></label>
+            <input asp-for="Images" class="form-control admin-input" accept="image/*" multiple>
+            <span asp-validation-for="Images" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success admin-save-btn">
+            Зберегти
+        </button>
+    </form>
+</div>

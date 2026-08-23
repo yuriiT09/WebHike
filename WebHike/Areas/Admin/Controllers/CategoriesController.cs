@@ -112,7 +112,7 @@ public class CategoriesController(HikeDbContext hikeDbContext) : Controller
 
         if (model.Image != null)
         {
-            if (category.Image != "default.jpg")
+            if (category.Image != "default.jpg" && !category.Image.StartsWith("http"))
                 DeleteImage(category.Image);
 
             category.Image = await SaveImageAsync(model.Image);
@@ -154,6 +154,8 @@ public class CategoriesController(HikeDbContext hikeDbContext) : Controller
         string fileName = Guid.NewGuid() + extension;
         string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
         string filePath = Path.Combine(folderPath, fileName);
+
+        Directory.CreateDirectory(folderPath);
 
         await using var stream = new FileStream(filePath, FileMode.Create);
         await image.CopyToAsync(stream);
