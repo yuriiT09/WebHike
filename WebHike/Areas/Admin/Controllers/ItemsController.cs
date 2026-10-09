@@ -5,9 +5,12 @@ using WebHike.Areas.Admin.Models.Item;
 using WebHike.Data;
 using WebHike.Data.Entities;
 
+using WebHike.Security;
+
 namespace WebHike.Areas.Admin.Controllers;
 
 [Area("Admin")]
+[AdminOnly]
 public class ItemsController(HikeDbContext hikeDbContext) : Controller
 {
     public IActionResult Index()
