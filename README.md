@@ -24,6 +24,16 @@ Keep passwords outside version control. The connection string is intentionally a
 - Session-backed basket with quantity controls
 - PostgreSQL persistence through EF Core
 
+## Administration
+
+Set `WebHike:AdminEmail` in user secrets to the email of your registered admin account. Other users cannot access the category and item administration routes.
+
+```bash
+dotnet user-secrets set "WebHike:AdminEmail" "you@example.com"
+```
+
+Existing SHA-256 account passwords are migrated to ASP.NET Core PasswordHasher hashes on successful sign-in. Before any real deployment, add login rate limiting, reset flows, proper role management and upload validation.
+
 ## Current limitations
 
 This is a development project, not a production shop. Payment processing, checkout fulfilment, email confirmation, stock control and a production-grade authentication system still need implementation and testing. No real payment data should be entered.
